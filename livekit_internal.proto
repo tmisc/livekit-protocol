@@ -161,6 +161,15 @@ message RemoveParticipant {
 message KeepAlive {
 }
 
+message RelaySignalRequest {
+  StartSession start_session = 1;
+  SignalRequest request = 2;
+}
+
+message RelaySignalResponse {
+  SignalResponse response = 1;
+}
+
 // room info that should not be returned to clients
 message RoomInternal {
   AutoTrackEgress track_egress = 1;
