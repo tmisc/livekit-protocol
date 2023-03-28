@@ -11,9 +11,10 @@ option ruby_package = "LiveKit::Proto";
 service Egress {
   // start recording or streaming a room, participant, or tracks
   rpc StartRoomCompositeEgress(RoomCompositeEgressRequest) returns (EgressInfo);
+  rpc StartWebEgress(WebEgressRequest) returns (EgressInfo);
+  rpc StartParticipantCompositeEgress(ParticipantCompositeEgressRequest) returns (EgressInfo);
   rpc StartTrackCompositeEgress(TrackCompositeEgressRequest) returns (EgressInfo);
   rpc StartTrackEgress(TrackEgressRequest) returns (EgressInfo);
-  rpc StartWebEgress(WebEgressRequest) returns (EgressInfo);
 
   // update web composite layout
   rpc UpdateLayout(UpdateLayoutRequest) returns (EgressInfo);
@@ -66,6 +67,18 @@ message WebEgressRequest {
   repeated EncodedFileOutput file_outputs = 9;
   repeated StreamOutput stream_outputs = 10;
   repeated SegmentedFileOutput segment_outputs = 11;
+}
+
+message ParticipantCompositeEgressRequest {
+  string room_name = 1;            // required
+  string participant_identity = 2; // required
+  oneof options {
+    EncodingOptionsPreset preset = 3; // (default H264_720P_30)
+    EncodingOptions advanced = 4;     // (optional)
+  }
+  repeated EncodedFileOutput file_outputs = 5;
+  repeated StreamOutput stream_outputs = 6;
+  repeated SegmentedFileOutput segment_outputs = 7;
 }
 
 // containerize up to one audio and one video track
@@ -261,9 +274,10 @@ message EgressInfo {
   string error = 9;
   oneof request {
     RoomCompositeEgressRequest room_composite = 4;
+    WebEgressRequest web = 14;
+    ParticipantCompositeEgressRequest participant_composite = 18;
     TrackCompositeEgressRequest track_composite = 5;
     TrackEgressRequest track = 6;
-    WebEgressRequest web = 14;
   }
   oneof result { // deprecated (use _result fields)
     StreamInfoList stream = 7 [deprecated = true];
@@ -321,5 +335,15 @@ message AutoTrackEgress {
     S3Upload s3 = 2;
     GCPUpload gcp = 3;
     AzureBlobUpload azure = 4;
+  }
+}
+
+message AutoParticipantEgress {
+  string filepath = 1;       // see docs for templating (default {track_id}-{time})
+  bool disable_manifest = 2; // disables upload of json manifest file (default false)
+  oneof output {
+    S3Upload s3 = 3;
+    GCPUpload gcp = 4;
+    AzureBlobUpload azure = 5;
   }
 }
