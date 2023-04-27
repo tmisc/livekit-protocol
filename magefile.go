@@ -42,6 +42,7 @@ func Proto() error {
 	}
 	psrpcProtoFiles := []string{
 		"rpc/egress.proto",
+		"rpc/encom.proto",
 		"rpc/ingress.proto",
 		"rpc/io.proto",
 		"rpc/signal.proto",

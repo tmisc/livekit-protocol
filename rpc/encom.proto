@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package rpc;
+
+option go_package = "github.com/livekit/livekit/pkg/service/rpc";
+
+import "options.proto";
+import "livekit_webhook.proto";
+
+service Encom {
+  rpc RoomWebhooks(livekit.WebhookEvent) returns (livekit.WebhookEvent) {
+    option (psrpc.options) = {
+      subscription: true
+      multi: true
+      topics: true
+      topic_params: {
+        names: ["room", "identity", "track_id"]
+      };
+    };
+  };
+  rpc EgressWebhooks(livekit.WebhookEvent) returns (livekit.WebhookEvent) {
+    option (psrpc.options) = {
+      subscription: true
+      multi: true
+      topics: true
+      topic_params: {
+        names: ["egress_id"]
+      };
+    };
+  };
+  rpc IngressWebhooks(livekit.WebhookEvent) returns (livekit.WebhookEvent) {
+    option (psrpc.options) = {
+      subscription: true
+      multi: true
+      topics: true
+      topic_params: {
+        names: ["ingress_id"]
+      };
+    };
+  };
+}
